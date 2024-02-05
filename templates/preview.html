@@ -3,20 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/preview.css') }}">
 <title>Preview</title>
 </head>
 <body>
     <h1>Timer</h1>
     <div id="timer"></div>
 
+
+    <div class="grid-container">
     {% for question_id, preview_status in preview_with_id %}
+        <div class="grid-item">
         {% if preview_status %}
             <a href="/question/{{ question_id }}"> *{{ question_id }}</a>
         {% else %}
             <a href="/question/{{ question_id }}"> {{ question_id }}</a>
         {% endif %}
-        <br>
+        </div>
     {% endfor %}
+    </div>
 
 
     <div>
