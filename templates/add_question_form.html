@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dynamic Text Inputs</title>
+<style>
+    .input-container {
+        margin-bottom: 10px;
+    }
+</style>
+</head>
+<body>
+    <form id="dynamic-form" action="/submit" method="post">
+        <div">
+            <label for="course">course</label>
+            <textarea id="course" name="course" rows="1" cols="500" placeholder="PMLE"></textarea>
+        </div>
+        <div>
+            <label for="question">Question</label>
+            <textarea id="question" name="question" rows="10" cols="500" placeholder="add your question"></textarea>
+        </div>  
+        <div>
+            <label for="m_answer">has multiple answer</label>
+            <input type="checkbox" id="m_answer" name="m_answer" value="yes">
+        </div>
+        <div id="input-container">
+            <div class="input-container">
+                <input type="checkbox" id="answers[]" name="answers[]" value="0">
+                <textarea id="options[]" name="options[]" rows="2" cols="500" placeholder="add your option"></textarea>
+                <button class="remove-btn" onclick="removeInputField(this)">Remove</button>
+            </div>
+        </div>
+        <button id="add-btn" type="button" onclick="addInputField()">Add New Input</button>
+        <button id="submit-btn" type="submit">Submit</button>
+    </form>
+
+    <script>
+        let checkboxCount = 1;
+
+        function addInputField() {
+            const container = document.getElementById('input-container');
+            const newInputField = document.createElement('div');
+            newInputField.classList.add('input-container');
+            newInputField.innerHTML = `
+                <input type="checkbox" id="answers[]" name="answers[]" value="${checkboxCount++}">
+                <textarea id="options[]" name="options[]" rows="2" cols="500" placeholder="add your option"></textarea>
+                <button class="remove-btn" onclick="removeInputField(this)">Remove</button>
+            `;
+            container.appendChild(newInputField);
+        }
+
+        function removeInputField(btn) {
+            const container = document.getElementById('input-container');
+            container.removeChild(btn.parentNode);
+        }
+
+        // document.getElementById('dynamic-form').addEventListener('submit', function(event) {
+        //     // Prevent default form submission behavior
+        //     event.preventDefault();
+        //     // Submit the form using JavaScript
+        //     submitForm();
+        // });
+
+        // function submitForm() {
+        //     document.getElementById('submit-btn').click();
+        // }
+    </script>
+</body>
+</html>

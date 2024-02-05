@@ -1,0 +1,13 @@
+.question-div {
+    padding:0.75rem;
+  }
+
+.button-panel {
+    padding: 0.75rem;
+}
+
+.button {
+    /* display: inline-block; */
+    padding: 0.1rem;
+    float: right;
+}

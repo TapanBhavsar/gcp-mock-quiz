@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/question.css') }}">
+<title>MCQ App</title>
+</head>
+<body>
+    <h1>Timer</h1>
+    <div id="timer"></div>
+
+    <h2>Question {{ question_index + 1 }}:</h2>
+    <div class="question-div">
+        <p>{{ question }}</p>
+    </div>
+    <form id="options" name="options">
+    {% if multi_answer == 'True' %}
+        {% for option in options %}
+            <div class="question-div">
+            {% if (user_answers is not none and user_answers|length > 0) and (loop.index|string in user_answers)%}
+                <input type="checkbox" id="answers[]" name="user_answers[]" value="{{ loop.index }}" checked>{{option}}
+            {% else %}
+                <input type="checkbox" id="answers[]" name="user_answers[]" value="{{ loop.index }}">{{option}}
+            {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        {% for option in options %}
+            <div class="question-div">
+            {% if (user_answers is not none and user_answers|length > 0) and (loop.index|string in user_answers)%}
+                <input type="radio" id="answers[]" name="user_answers[]" value= "{{ loop.index }}" checked>{{option}}
+                
+            {% else %}
+                <input type="radio" id="answers[]" name="user_answers[]" value= "{{ loop.index }}">{{option}}  
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% endif %}
+    <div class="button-panel">
+        {% if preview %}
+            <input type="checkbox" id="preview" name="preview" value="1" checked> select for preview
+        {% else %}
+            <input type="checkbox" id="preview" name="preview" value="1"> select for preview
+        {% endif %}
+    </form>
+
+
+        <div class="button">
+            <form id='assess' name="assess" action="/assessment" method="post">
+                <input type="hidden" name="question_index" value="{{ question_index }}">
+            </form>
+            <button type="button" onclick="submitForm('assess')">Submit</button>
+        </div>
+
+        <div class="button">
+            <form id='preview_request' name="preview_request" action="/preview" method="post">
+                <input type="hidden" name="question_index" value="{{ question_index }}">
+            </form>
+            <button type="button" onclick="submitForm('preview_request')">Preview</button>
+        </div>
+        
+        {% if next_button %}
+            <div class="button">
+                <form id='next' name="next" action="/next" method="post">
+                    <input type="hidden" name="question_index" value="{{ question_index }}">
+                </form>
+                <button type="button" onclick="submitForm('next')">Next</button>
+            </div>
+        {% endif %}
+    
+        {% if previous_button %}
+        <div class="button">
+            <form id='previous' name="previous" action="/previous" method="post">
+                <input type="hidden" name="question_index" value="{{ question_index }}">
+            </form>
+            <button type="button" onclick="submitForm('previous')">Previous</button>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+         function submitForm(step) {
+            const form1 = document.getElementById('options');
+            const form2 = document.getElementById(step);
+            
+            const formElements = form1.elements;
+            for (let i = 0; i < formElements.length; i++) {
+                const element = formElements[i].cloneNode(true);
+                form2.appendChild(element);
+            }
+            form2.submit();
+        }
+
+        function updateTimer() {
+            fetch('/remaining-time')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('timer').innerText = `Remaining Time: ${data.hours} hours, ${data.minutes} minutes, ${data.seconds} seconds`;
+                if (data.hours === 0 && data.minutes === 0 && data.seconds === 0) {
+                    submitForm('assess');
+                }
+            });
+        }
+
+        setInterval(updateTimer, 1000); // Update timer every second
+    </script>
+</body>
+</html>

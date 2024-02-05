@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview</title>
+</head>
+<body>
+    <h1>Timer</h1>
+    <div id="timer"></div>
+
+    {% for question_id, preview_status in preview_with_id %}
+        {% if preview_status %}
+            <a href="/question/{{ question_id }}"> *{{ question_id }}</a>
+        {% else %}
+            <a href="/question/{{ question_id }}"> {{ question_id }}</a>
+        {% endif %}
+        <br>
+    {% endfor %}
+
+
+    <div>
+        <form id='assess' name="assess" action="/assessment" method="post">
+        </form>
+        <button type="button" onclick="submitForm('assess')">Submit</button>    
+    </div>
+
+    <script>
+        function submitForm(step) {
+            const form = document.getElementById(step);
+            form.submit();
+        }
+
+        function updateTimer() {
+            fetch('/remaining-time')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('timer').innerText = `Remaining Time: ${data.hours} hours, ${data.minutes} minutes, ${data.seconds} seconds`;
+                if (data.hours === 0 && data.minutes === 0 && data.seconds === 0) {
+                    submitForm('assess');
+                }
+            });
+        }
+        setInterval(updateTimer, 1000); // Update timer every second
+
+    </script>
+</body>
+</html>
